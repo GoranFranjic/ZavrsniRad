@@ -1,3 +1,4 @@
+edunova\view\ProzorDjelatnik$4.class
 edunova\model\Artikal.class
 edunova\model\Djelatnik.class
 edunova\view\ProzorIskaz.class
@@ -8,6 +9,7 @@ edunova\model\Entitet.class
 edunova\view\Autorizacija$1.class
 edunova\view\Izbornik$4.class
 edunova\view\Autorizacija.class
+edunova\view\ProzorDjelatnik$2.class
 edunova\view\ProzorArtikal$3.class
 edunova\model\JedMjera.class
 edunova\view\ProzorIskaz$1.class
@@ -25,13 +27,17 @@ edunova\controller\ObradaDjelatnik.class
 edunova\util\EdunovaException.class
 edunova\Start.class
 edunova\view\Autorizacija$2.class
+edunova\view\ProzorDjelatnik$3.class
 edunova\model\Osoba.class
 edunova\view\ProzorArtikal$4.class
 edunova\util\PocetniInsert.class
 edunova\controller\Obrada.class
+edunova\view\Izbornik$5.class
+edunova\view\ProzorDjelatnik$1.class
 edunova\view\ProzorArtikal.class
 edunova\view\ProzorIskaz$5.class
 edunova\view\Autorizacija$3.class
 edunova\view\ProzorIskaz$2.class
 edunova\view\Izbornik.class
 edunova\view\ProzorArtikal$2.class
+edunova\view\ProzorDjelatnik.class

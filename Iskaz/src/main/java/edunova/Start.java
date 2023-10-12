@@ -8,11 +8,9 @@ package edunova;
 import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import edunova.controller.ObradaDjelatnik;
-
 import edunova.model.Djelatnik;
 import edunova.model.Entitet;
 import edunova.model.Iskaz;
-import edunova.model.Osoba;
 import edunova.util.EdunovaException;
 import edunova.util.HibernateUtil;
 import edunova.view.Autorizacija;

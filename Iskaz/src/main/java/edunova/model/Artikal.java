@@ -49,6 +49,14 @@ public class Artikal{
         this.JedMjera = JedMjera;
     }
 
+    public void setJedinicaMjere(String jedinicaMjere) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setJedMjera_id_JedMjere(String jedinicaMjere) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
     
 
 }

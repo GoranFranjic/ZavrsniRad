@@ -5,12 +5,20 @@
 package edunova.view;
 import javax.swing.JOptionPane;
 import edunova.util.Alati;
-
+import edunova.model.Artikal;
+import edunova.util.HibernateUtil;
+import java.awt.HeadlessException;
+import java.math.BigDecimal;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 /**
  *
  * @author goran
  */
 public class ProzorArtikal extends javax.swing.JFrame {
+
+    private BigDecimal cijenaBigDecimal;
 
     /**
      * Creates new form ProzorArtikal
@@ -137,7 +145,45 @@ public class ProzorArtikal extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNaziv2KeyPressed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        
+                                                
+    // Unos podataka iz korisničkog sučelja
+    String naziv = txtNaziv.getText();
+    //double cijena = Double.parseDouble(txtNaziv1.getText());
+    //String jedinicaMjere = txtNaziv2.getText();
+
+       
+    
+    //System.out.println("Unesena cijena: " + cijena);
+    
+    //cijenaBigDecimal = BigDecimal.valueOf(cijena);
+    
+    // Stvaranje objekta Artikal
+    Artikal artikal = new Artikal();
+    artikal.setNaziv(naziv);
+    //artikal.setCijena(cijenaBigDecimal);
+    //artikal.setJedinicaMjere(jedinicaMjere);
+    
+      
+    // Spremanje objekta u bazu podataka pomoću Hibernatea
+    try {
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        try (Session session = sessionFactory.openSession()) {
+            session.beginTransaction();
+            
+            session.save(artikal); // Spremi artikal u bazu podataka
+            
+            session.getTransaction().commit();
+        }
+
+        JOptionPane.showMessageDialog(this, "Artikal uspješno spremljen u bazu.");
+    } catch (HeadlessException | HibernateException e) {
+        JOptionPane.showMessageDialog(this, "Greška prilikom spremanja artikla: " + e.getMessage());
+    }
+
+        
+        
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     
