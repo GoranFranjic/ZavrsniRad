@@ -153,7 +153,7 @@ public class ProzorIskaz extends javax.swing.JFrame {
 
     private void txtArtikalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtArtikalKeyPressed
        if (evt.getKeyCode()==KeyEvent.VK_ENTER)
-                         JButtom.requestFocus();
+                         JButtomActionPerformed(null);
     }//GEN-LAST:event_txtArtikalKeyPressed
 
     private void txtDjelatnikKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDjelatnikKeyPressed
