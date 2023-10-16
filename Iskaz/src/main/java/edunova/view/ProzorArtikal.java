@@ -8,6 +8,7 @@ import edunova.util.Alati;
 import edunova.model.Artikal;
 import edunova.util.HibernateUtil;
 import java.awt.HeadlessException;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -134,14 +135,22 @@ public class ProzorArtikal extends javax.swing.JFrame {
 
     private void txtNazivKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNazivKeyPressed
 
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER)
+                         txtNaziv1.requestFocus();
     }//GEN-LAST:event_txtNazivKeyPressed
 
     private void txtNaziv1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNaziv1KeyPressed
-        // TODO add your handling code here:
+      
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER)
+                         txtNaziv2.requestFocus();
+        
     }//GEN-LAST:event_txtNaziv1KeyPressed
 
     private void txtNaziv2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNaziv2KeyPressed
-        // TODO add your handling code here:
+       
+        if (evt.getKeyCode()==KeyEvent.VK_ENTER)
+                         jButton1.requestFocus();
+        
     }//GEN-LAST:event_txtNaziv2KeyPressed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

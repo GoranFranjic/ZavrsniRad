@@ -7,6 +7,10 @@ package edunova.controller;
 import edunova.model.Iskaz;
 import java.util.Collection;
 import edunova.util.EdunovaException;
+import edunova.util.HibernateUtil;
+import java.util.List;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 /**
  *
@@ -14,17 +18,19 @@ import edunova.util.EdunovaException;
  */
 public class ObradaIskaz {
 
-    public Collection<? extends Iskaz> read() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void spremiIskaz(Iskaz iskaz) throws EdunovaException {
+        Session session = HibernateUtil.getSession();
+        try {
+            session.beginTransaction();
+            session.save(iskaz);
+            session.getTransaction().commit();
+        } catch (HibernateException e) {
+            session.getTransaction().rollback();
+            throw new EdunovaException("Pogreška pri spremanju iskaza: " + e.getMessage());
+        } finally {
+            HibernateUtil.zatvoriSession(session);
+        }
     }
-
-    public void setEntitet(Iskaz kaz) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    public void create() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-      
+    
 }
+

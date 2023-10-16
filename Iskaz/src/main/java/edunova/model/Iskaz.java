@@ -4,25 +4,19 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import java.util.Date;
 
 @Entity
 public class Iskaz {
-     @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id_iskaza;
-	
-	private String naziv;
-        
-        @ManyToOne
-	private Djelatnik djelatnik;
-        
-        @ManyToOne
-	private Artikal artikal;
-        
-	private Date datumPocetka;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id_iskaza;
+
+    private Integer djelatnikId; // ID Djelatnika
+    private Integer artikalId;   // ID Artikla
+
+    private Date datum;
 
     public Integer getId_iskaza() {
         return id_iskaza;
@@ -32,36 +26,33 @@ public class Iskaz {
         this.id_iskaza = id_iskaza;
     }
 
-    public String getNaziv() {
-        return naziv;
+    public Integer getDjelatnikId() {
+        return djelatnikId;
     }
 
-    public void setNaziv(String naziv) {
-        this.naziv = naziv;
+    public void setDjelatnikId(Integer djelatnikId) {
+        this.djelatnikId = djelatnikId;
     }
 
-    public Djelatnik getDjelatnik() {
-        return djelatnik;
+    public Integer getArtikalId() {
+        return artikalId;
     }
 
-    public void setDjelatnik(Djelatnik djelatnik) {
-        this.djelatnik = djelatnik;
+    public void setArtikalId(Integer artikalId) {
+        this.artikalId = artikalId;
     }
 
-    public Artikal getArtikal() {
-        return artikal;
+    public Date getDatum() {
+        return datum;
     }
 
-    public void setArtikal(Artikal artikal) {
-        this.artikal = artikal;
+    public void setDatum(Date datum) {
+        this.datum = datum;
     }
-
-    public Date getDatumPocetka() {
-        return datumPocetka;
-    }
-
-    public void setDatumPocetka(Date datumPocetka) {
-        this.datumPocetka = datumPocetka;
-    }
-        
+    
+    
+    
+    
+  
+   
 }

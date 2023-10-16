@@ -4,25 +4,25 @@
  */
 package edunova.view;
 
-
+import edunova.controller.ObradaIskaz;
 import edunova.model.Artikal;
 import edunova.model.Djelatnik;
 import edunova.model.Iskaz;
-import javax.swing.JOptionPane;
 import edunova.util.Alati;
 import edunova.util.EdunovaException;
-import edunova.util.HibernateUtil;
-import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
+import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import edunova.util.HibernateUtil;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 
 /**
  *
@@ -30,12 +30,18 @@ import org.hibernate.SessionFactory;
  */
 public class ProzorIskaz extends javax.swing.JFrame {
 
-   
+       
+    private SessionFactory sessionFactory;
+    private ObradaIskaz obrada;
+
     public ProzorIskaz() {
         initComponents();
+        obrada = new ObradaIskaz();
         setTitle(Alati.NAZIV_APP + " | ISKAZ");
 
-     }
+        // Inicijalizacija SessionFactory
+        sessionFactory = HibernateUtil.getSessionFactory();
+    }
    
 
     /**
@@ -55,7 +61,7 @@ public class ProzorIskaz extends javax.swing.JFrame {
         txtArtikal = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtDjelatnik = new javax.swing.JTextField();
-        JButtom = new javax.swing.JButton();
+        btnDodaj = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -90,10 +96,10 @@ public class ProzorIskaz extends javax.swing.JFrame {
             }
         });
 
-        JButtom.setText("Dodaj");
-        JButtom.addActionListener(new java.awt.event.ActionListener() {
+        btnDodaj.setText("Dodaj");
+        btnDodaj.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JButtomActionPerformed(evt);
+                btnDodajActionPerformed(evt);
             }
         });
 
@@ -112,7 +118,7 @@ public class ProzorIskaz extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(JButtom)
+                            .addComponent(btnDodaj)
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel4))
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -136,7 +142,7 @@ public class ProzorIskaz extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtArtikal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(68, 68, 68)
-                        .addComponent(JButtom)
+                        .addComponent(btnDodaj)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
                 .addContainerGap())
@@ -153,7 +159,7 @@ public class ProzorIskaz extends javax.swing.JFrame {
 
     private void txtArtikalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtArtikalKeyPressed
        if (evt.getKeyCode()==KeyEvent.VK_ENTER)
-                         JButtom.requestFocus();
+                         btnDodaj.requestFocus();
     }//GEN-LAST:event_txtArtikalKeyPressed
 
     private void txtDjelatnikKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDjelatnikKeyPressed
@@ -165,53 +171,87 @@ public class ProzorIskaz extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDjelatnikActionPerformed
 
-    private void JButtomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JButtomActionPerformed
-                                       
-   
- 
-    String datumString = txtDatum.getText();
-    Date datum = null; // Datum kao java.util.Date
-    int djelatnikId = Integer.parseInt(txtDjelatnik.getText());
-    int artikalId = Integer.parseInt(txtArtikal.getText());
+    private void btnDodajActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDodajActionPerformed
 
-      
-   // Pretvaranje datuma iz Stringa u Date
     try {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        datum = sdf.parse(datumString);
-    } catch (ParseException ex) {
-        // Obrada iznimke ako je String neispravan datum
-        ex.printStackTrace();
-    }
+            // Dobivanje podataka iz korisničkog sučelja
+            String datum = txtDatum.getText();
+            String djelatnik = txtDjelatnik.getText();
+            String artikal = txtArtikal.getText();
 
-    // Stvaranje objekta Iskaz
-    Iskaz iskaz = new Iskaz();
-    iskaz.setDatum(datum);
-    iskaz.setDjelatnikId(djelatnikId);
-    iskaz.setArtikalId(artikalId);
+            // Provjera jesu li svi podaci uneseni
+            if (datum.isEmpty() || djelatnik.isEmpty() || artikal.isEmpty()) {
+                throw new EdunovaException("Svi podaci moraju biti uneseni");
+            }
 
-    // Spremanje objekta u bazu podataka pomoću Hibernatea
-    try {
-        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
-        try (Session session = sessionFactory.openSession()) {
+            // Kreiranje novog objekta Iskaz s unesenim podacima
+            Iskaz iskaz = new Iskaz();
+            iskaz.setDatum(datum);
+            iskaz.setDjelatnik(djelatnik);
+            iskaz.setArtikal(artikal);
+
+            // Otvorite Hibernate session
+            Session session = HibernateUtil.getSession();
+
+            // Počnite transakciju
             session.beginTransaction();
 
-            session.save(iskaz); // Spremi iskaz u bazu podataka
+            // Unos iskaza u bazu podataka pomoću Hibernatea
+            session.save(iskaz);
 
+            // Završite transakciju
             session.getTransaction().commit();
+
+            // Zatvorite Hibernate session
+            HibernateUtil.zatvoriSession(session);
+
+        
+            // Obavijestite korisnika o uspješnom unosu
+            JOptionPane.showMessageDialog(this, "Iskaz je uspješno spremljen u bazu.");
+        } catch (EdunovaException e) {
+            JOptionPane.showMessageDialog(this, "Greška prilikom unosa iskaza: " + e.getMessage());
+        }
+    }
+
+    private static class txtDatum {
+
+        private static String getText() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
         }
 
-        JOptionPane.showMessageDialog(this, "Iskaz uspješno spremljen u bazu.");
-    } catch (HeadlessException | HibernateException e) {
-        JOptionPane.showMessageDialog(this, "Greška prilikom spremanja iskaza: " + e.getMessage());
+        public txtDatum() {
+        }
     }
-           
-    }//GEN-LAST:event_JButtomActionPerformed
+
+    private static class txtDjelatnik {
+
+        private static String getText() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        public txtDjelatnik() {
+        }
+    }
+
+    private static class txtArtikal {
+
+        private static String getText() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        public txtArtikal() {
+        }
+    
+
+
+
+        
+    }//GEN-LAST:event_btnDodajActionPerformed
 
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton JButtom;
+    private javax.swing.JButton btnDodaj;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -221,12 +261,6 @@ public class ProzorIskaz extends javax.swing.JFrame {
     private javax.swing.JTextField txtDatum;
     private javax.swing.JTextField txtDjelatnik;
     // End of variables declaration//GEN-END:variables
-
-    private void ucitaj() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    
 
   
 }

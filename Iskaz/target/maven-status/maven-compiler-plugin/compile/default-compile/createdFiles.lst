@@ -16,7 +16,6 @@ edunova\model\JedMjera.class
 edunova\view\Izbornik$6.class
 edunova\view\ProzorIskaz$1.class
 edunova\view\Izbornik$1.class
-edunova\view\ProzorIskaz$6.class
 edunova\model\Iskaz.class
 edunova\view\Autorizacija$4.class
 edunova\util\HibernateUtil.class
@@ -37,7 +36,10 @@ edunova\controller\Obrada.class
 edunova\view\Izbornik$5.class
 edunova\view\ProzorDjelatnik$1.class
 edunova\view\ProzorArtikal.class
+edunova\view\ProzorIskaz$txtDjelatnik.class
+edunova\view\ProzorIskaz$txtDatum.class
 edunova\view\ProzorIskaz$5.class
+edunova\view\ProzorIskaz$txtArtikal.class
 edunova\view\Autorizacija$3.class
 edunova\view\ProzorIskaz$2.class
 edunova\view\Izbornik.class
