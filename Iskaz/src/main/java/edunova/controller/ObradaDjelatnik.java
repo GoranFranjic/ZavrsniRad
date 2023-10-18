@@ -8,6 +8,7 @@ import de.mkammerer.argon2.Argon2;
 import de.mkammerer.argon2.Argon2Factory;
 import edunova.model.Djelatnik;
 import edunova.util.EdunovaException;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -45,7 +46,8 @@ public class ObradaDjelatnik extends ObradaOsoba<Djelatnik>{
     /*public Djelatnik autoriziraj(String operedunovahr, String oper) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }*/
-    
+
+ 
     
     
 }
