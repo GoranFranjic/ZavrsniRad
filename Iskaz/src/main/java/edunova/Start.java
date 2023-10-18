@@ -28,8 +28,8 @@ public class Start {
     
       //lozinka();
      //new Autorizacija().setVisible(true);
-      /*new Start();
-      
+      //new Start();
+      /*
        ObradaDjelatnik oo = new ObradaDjelatnik();
        
        Djelatnik o = oo.autoriziraj("oper@proces.hr", "oper");

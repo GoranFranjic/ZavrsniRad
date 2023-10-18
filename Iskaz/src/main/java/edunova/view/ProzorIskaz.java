@@ -12,17 +12,23 @@ import javax.swing.JOptionPane;
 import edunova.util.Alati;
 import edunova.util.EdunovaException;
 import edunova.util.HibernateUtil;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 
 /**
  *
@@ -30,10 +36,29 @@ import org.hibernate.SessionFactory;
  */
 public class ProzorIskaz extends javax.swing.JFrame {
 
-   
+       private int trenutniRedak = -1;
+       private Iskaz trenutniIskaz = null;
+
+
     public ProzorIskaz() {
         initComponents();
         setTitle(Alati.NAZIV_APP + " | ISKAZ");
+        
+
+String[] columnNames = {"ID Iskaza", "Artikal ID", "Datum", "Djelatnik ID"};
+     
+        Object[][] data = {};
+// Kod za kreiranje modela za jTable
+DefaultTableModel model = new DefaultTableModel(data, columnNames) {
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return true; // Omogućuje uređivanje svih ćelija
+    }
+};
+
+jTable1.setModel(model);
+
+jTable1.setDefaultEditor(Object.class, null);
 
      }
    
@@ -55,10 +80,21 @@ public class ProzorIskaz extends javax.swing.JFrame {
         txtArtikal = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         txtDjelatnik = new javax.swing.JTextField();
-        JButtom = new javax.swing.JButton();
+        jButton = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        lstPodaci.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
+            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
+                lstPodaciValueChanged(evt);
+            }
+        });
         jScrollPane1.setViewportView(lstPodaci);
 
         jLabel2.setText("Datum");
@@ -90,10 +126,58 @@ public class ProzorIskaz extends javax.swing.JFrame {
             }
         });
 
-        JButtom.setText("Dodaj");
-        JButtom.addActionListener(new java.awt.event.ActionListener() {
+        jButton.setText("Dodaj");
+        jButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JButtomActionPerformed(evt);
+                jButtonActionPerformed(evt);
+            }
+        });
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jTable1.addInputMethodListener(new java.awt.event.InputMethodListener() {
+            public void caretPositionChanged(java.awt.event.InputMethodEvent evt) {
+            }
+            public void inputMethodTextChanged(java.awt.event.InputMethodEvent evt) {
+                jTable1InputMethodTextChanged(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTable1);
+
+        jButton1.setText("Prikaži");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText("Izmjeni");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Spremi izmjene");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton4.setText("Brisanje");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
             }
         });
 
@@ -104,25 +188,43 @@ public class ProzorIskaz extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtArtikal, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
-                    .addComponent(txtDatum, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
-                    .addComponent(txtDjelatnik, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(JButtom)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                            .addComponent(txtArtikal, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
+                            .addComponent(txtDatum, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
+                            .addComponent(txtDjelatnik, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jButton4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButton1))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -136,10 +238,15 @@ public class ProzorIskaz extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtArtikal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(68, 68, 68)
-                        .addComponent(JButtom)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 288, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton)
+                            .addComponent(jButton1)
+                            .addComponent(jButton2)
+                            .addComponent(jButton3)
+                            .addComponent(jButton4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34))))
         );
 
         pack();
@@ -153,7 +260,7 @@ public class ProzorIskaz extends javax.swing.JFrame {
 
     private void txtArtikalKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtArtikalKeyPressed
        if (evt.getKeyCode()==KeyEvent.VK_ENTER)
-                         JButtomActionPerformed(null);
+                         jButtonActionPerformed(null);
     }//GEN-LAST:event_txtArtikalKeyPressed
 
     private void txtDjelatnikKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDjelatnikKeyPressed
@@ -165,7 +272,7 @@ public class ProzorIskaz extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDjelatnikActionPerformed
 
-    private void JButtomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JButtomActionPerformed
+    private void jButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonActionPerformed
                                        
    
  
@@ -206,16 +313,169 @@ public class ProzorIskaz extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Greška prilikom spremanja iskaza: " + e.getMessage());
     }
            
-    }//GEN-LAST:event_JButtomActionPerformed
+    }//GEN-LAST:event_jButtonActionPerformed
+
+    private void lstPodaciValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_lstPodaciValueChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lstPodaciValueChanged
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+    DefaultTableModel model = new DefaultTableModel();
+    model.addColumn("ID Iskaza");
+    model.addColumn("Artikal");
+    model.addColumn("Datum");
+    model.addColumn("Djelatnik");
+
+    Session session = HibernateUtil.getSessionFactory().openSession();
+    session.beginTransaction();
+
+    CriteriaBuilder builder = session.getCriteriaBuilder();
+    CriteriaQuery<Iskaz> criteria = builder.createQuery(Iskaz.class);
+    Root<Iskaz> root = criteria.from(Iskaz.class);
+    criteria.select(root);
+
+    List<Iskaz> iskazi = session.createQuery(criteria).getResultList();
+
+    for (Iskaz iskaz : iskazi) {
+        model.addRow(new Object[]{iskaz.getId_iskaza(), iskaz.getArtikalId(), iskaz.getDatum(), iskaz.getDjelatnikId()});
+    }
+
+    session.getTransaction().commit();
+    session.close();
+
+    jTable1.setModel(model);
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jTable1InputMethodTextChanged(java.awt.event.InputMethodEvent evt) {//GEN-FIRST:event_jTable1InputMethodTextChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTable1InputMethodTextChanged
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+      
+                                           
+    int selectedRow = jTable1.getSelectedRow();
+    if (selectedRow == -1) {
+        JOptionPane.showMessageDialog(this, "Nije odabran redak za uređivanje.");
+        return;
+    }
+
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+    // Dohvatite podatke iz odabranog retka
+    int idIskaza = (int) model.getValueAt(selectedRow, 0); // ID Iskaza
+    int artikalId = (int) model.getValueAt(selectedRow, 1); // Artikal ID
+    Date datum = (Date) model.getValueAt(selectedRow, 2); // Datum
+    int djelatnikId = (int) model.getValueAt(selectedRow, 3); // Djelatnik ID
+
+    // Postavite trenutni redak i podatke za uređivanje
+    trenutniRedak = selectedRow;
+    trenutniIskaz = new Iskaz();
+    trenutniIskaz.setId_iskaza(idIskaza);
+    trenutniIskaz.setArtikalId(artikalId);
+    trenutniIskaz.setDatum(datum);
+    trenutniIskaz.setDjelatnikId(djelatnikId);
+
+    // Postavite podatke u odgovarajuća polja za uređivanje
+    txtDatum.setText(new SimpleDateFormat("yyyy-MM-dd").format(datum));
+    txtDjelatnik.setText(String.valueOf(djelatnikId));
+    txtArtikal.setText(String.valueOf(artikalId));
+
+
+        
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        
+       
+    if (trenutniRedak != -1 && trenutniIskaz != null) {
+        // Dohvatite nove vrijednosti iz polja za uređivanje
+        String datumString = txtDatum.getText();
+        int djelatnikId = Integer.parseInt(txtDjelatnik.getText());
+        int artikalId = Integer.parseInt(txtArtikal.getText());
+
+        // Pretvaranje datuma iz Stringa u Date
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            Date datum = sdf.parse(datumString);
+
+            // Ažurirajte podatke u modelu
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.setValueAt(datum, trenutniRedak, 2);
+            model.setValueAt(djelatnikId, trenutniRedak, 3);
+            model.setValueAt(artikalId, trenutniRedak, 1);
+
+            // Ako je potrebno, ažurirajte podatke u bazi podataka
+            trenutniIskaz.setDatum(datum);
+            trenutniIskaz.setDjelatnikId(djelatnikId);
+            trenutniIskaz.setArtikalId(artikalId);
+
+            // Ovdje dodajte kod za spremanje u bazu podataka
+
+            // Obrišite trenutne podatke
+            trenutniRedak = -1;
+            trenutniIskaz = null;
+
+            // Očistite polja za uređivanje
+            txtDatum.setText("");
+            txtDjelatnik.setText("");
+            txtArtikal.setText("");
+        } catch (ParseException ex) {
+            JOptionPane.showMessageDialog(this, "Neispravan format datuma.");
+        }
+    }
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+       
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow >= 0) {
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            int idIskaza = (int) model.getValueAt(selectedRow, 0);
+
+            // Pozovite funkciju za brisanje u bazi podataka (Hibernate)
+            Session session = HibernateUtil.getSessionFactory().openSession();
+  
+            Transaction tx = session.beginTransaction();
+            Iskaz iskaz = session.get(Iskaz.class, idIskaza);
+            if (iskaz != null) {
+                session.delete(iskaz);
+                tx.commit();
+                session.close();
+                // Ažurirajte model tablice
+                model.removeRow(selectedRow);
+            } else {
+                session.close();
+                JOptionPane.showMessageDialog(null, "Iskaz s ID-om " + idIskaza + " ne postoji.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Niste odabrali redak za brisanje.");
+        
+        };
+
+        Session session = HibernateUtil.getSessionFactory().openSession();
+    session.beginTransaction();
+        
+        
+    }//GEN-LAST:event_jButton4ActionPerformed
 
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton JButtom;
+    private javax.swing.JButton jButton;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
     private javax.swing.JList<Iskaz> lstPodaci;
     private javax.swing.JTextField txtArtikal;
     private javax.swing.JTextField txtDatum;

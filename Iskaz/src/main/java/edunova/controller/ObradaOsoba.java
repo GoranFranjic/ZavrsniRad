@@ -9,7 +9,7 @@ import edunova.util.Alati;
 import edunova.util.EdunovaException;
 import java.util.List;
 import org.apache.commons.validator.routines.EmailValidator;
-//import org.apache.commons.validator.routines.EmailValidator;
+
 
 
 public abstract class ObradaOsoba<T extends Osoba> extends Obrada<T>{
